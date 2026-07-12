@@ -1,3 +1,6 @@
+<p align="center">
+  <img src="assets/banner.png" alt="Helios" width="100%">
+</p>
 # Helios
 
 A space simulation engine that takes you from interstellar space to standing on a planetary surface — in one seamless flight, with no loading screens, built on real astronomical data.
