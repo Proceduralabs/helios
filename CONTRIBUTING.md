@@ -1,53 +1,90 @@
 # Contributing to Helios
 
-Contributions are welcome — with two hard rules and a few soft ones. The hard rules exist because Helios is dual-licensed (AGPL-3.0 + commercial), and that model is fragile: it survives only if copyright stays consolidated and the codebase stays clean.
+> **Current stage: design review only.** Issues that identify factual errors, contradictions, data sources, or design evidence are welcome. Code and pull-request contributions are not being merged yet because there is no source skeleton/CI and the contributor agreement, legal identity, privacy records, and signing workflow are unfinished.
 
-## Hard rule 1: sign the CLA
+This policy will change when [Roadmap Milestone 0](ROADMAP.md) lands and the legal contribution process is ready.
 
-Before your first pull request can merge, you sign the [Contributor License Agreement](CLA.md). It grants Proceduralabs the rights needed to offer your contribution under both the AGPL and commercial licenses. You keep ownership of your work and can reuse it anywhere.
+## Useful contributions today
 
-No CLA, no merge. This applies to one-line typo fixes too, because copyright law doesn't care how small a patch is.
+- Open an issue with a reproducible correction to a technical or scientific claim.
+- Propose an exact Earth DEM product/region with datum, resolution, DOI, terms, and known issues.
+- Propose/test a reproducible Gaia DR3 ADQL query and quality policy.
+- Add primary-source evidence to reopen a decision.
+- Review product wording for measured versus model-derived versus procedural claims.
+- Identify a Vulkan/MoltenVK capability risk on named hardware with logs/spec references.
 
-## Hard rule 2: no code from incompatible sources
+Because PR rights cannot be accepted safely yet, current issues/discussions should contain facts, analysis, and links to authoritative sources only—not patches, original assets, source archives, or attached datasets. The maintainer can independently implement uncontroversial corrections until the workflow opens.
 
-Do **not** copy, port line-by-line, or closely paraphrase code from:
+## What must happen before code contributions open
 
-- GPL/LGPL projects — Cosmonium, Stellarium, Celestia, `rantonels/starless`, and most academic black-hole renderers. These are *study-only* references.
-- Repositories with **no LICENSE file** (default = all rights reserved).
-- Anything you can't name the license of.
+- M0 source/build/test/CI skeleton exists.
+- The real maintainer/legal entity and contact details replace every placeholder.
+- Austrian/EU-qualified counsel reviews the CLA and licensing guidance.
+- Individual and company/employer contribution cases are covered.
+- A signature, identity, audit, privacy, and retention workflow exists.
+- The project consistently chooses `AGPL-3.0-only` and file/document/asset markings.
+- Dependency and dataset manifest policies are operational.
 
-Safe sources: MIT, BSD, Apache-2.0, Zlib, public domain — with attribution kept in `THIRD_PARTY_NOTICES` when required. If you're unsure, ask in the PR before writing code. One contaminated snippet forces a rewrite of everything it touched.
+## Future hard rule 1: reviewed contributor agreement
 
-Reading a GPL implementation to understand an *algorithm* and then implementing it independently from the paper is fine. Copying its structure is not.
+Before a contribution can merge, its author will sign the finalized [Contributor License Agreement](CLA.md) or an approved equivalent/company agreement. The intended agreement grants the rights needed to distribute the contribution under AGPL and separate commercial terms. Contributors retain ownership.
 
-## Before you write code
+This is **relicensing-rights coverage**, not copyright consolidation. It will apply to original code, shaders, documentation, and other copyrightable contributions according to the finalized agreement.
 
-- Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/DECISIONS.md](docs/DECISIONS.md). PRs that fight a logged decision get closed with a pointer to the log — reopen the decision first (with evidence) if you think it's wrong.
-- For anything bigger than a bugfix, open an issue first. Solo-maintainer project: unsolicited 4,000-line PRs are a burden, not a gift.
-- Check the [roadmap](ROADMAP.md). Features below the Milestone 10 gate aren't accepted yet, however cool.
+## Future hard rule 2: rights-clean contributions
 
-## Code expectations
+Do not copy, port line-by-line, translate, or closely paraphrase source into Helios-owned files from:
 
-- C++20. Warnings clean at `-Wall -Wextra` / `/W4`. ASan/UBSan build must pass.
-- The double/float boundary is sacred: absolute positions live in `helios_universe` as `double`; everything the GPU sees is camera-relative `float32`. A PR that stores an absolute position anywhere else is wrong by construction.
-- Terrain generation must stay deterministic — no fast-math, no uninitialized reads, no atomics-order-dependent results in generation kernels.
-- New Vulkan objects get debug names. New passes get Tracy zones.
-- Tests for `helios_math` (frames, cube-sphere mapping, geodesy) are mandatory with any change there — this is where silent corruption hides.
+- GPL/LGPL projects when Helios lacks the rights required for its planned commercial license;
+- repositories or snippets with no license;
+- papers, tutorials, answers, generated code, or assets whose reuse terms are unknown;
+- employer/client work you are not authorized to contribute.
 
-Every source file carries an SPDX header:
+Permissive dependency candidates (MIT, BSD, Apache-2.0, Zlib, public domain) still require license, version, source, modifications, and notices. Ask before implementing if provenance is uncertain.
+
+Studying an algorithm from a paper/specification and independently implementing it is different from copying another project's expressive code/structure, but provenance should still be documented. The project's commercial-rights policy is stricter than a generic AGPL-compatibility statement.
+
+## Before future implementation work
+
+- Read [docs/INDEX.md](docs/INDEX.md), [docs/PRODUCT.md](docs/PRODUCT.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), and [docs/DECISIONS.md](docs/DECISIONS.md).
+- Check [ROADMAP.md](ROADMAP.md). Features below the Milestone 10 gate are not accepted v1 work.
+- Map the work to a product requirement and validation test.
+- For anything larger than a narrow fix, open an issue/design note first.
+- Reopen a logged decision with evidence and a migration/validation proposal rather than bypassing it in code.
+
+## Future code expectations
+
+- C++20; warnings clean at the selected Clang/GCC/MSVC levels; ASan/UBSan clean where supported.
+- Frame-tagged coordinate types enforce the boundary: `helios_universe` owns frame relationships/astronomical transforms; `helios_planet` may own tagged body-local positions; only scene assembly creates camera-relative GPU floats.
+- No untagged “absolute” position or GPU subtraction of huge world values.
+- Terrain changes state their determinism tier and update generator/cache versions when output meaning changes.
+- New Vulkan objects receive debug names; passes and material work receive useful Tracy zones.
+- Math, asset parsing, cube topology, time/frame, and cache changes include unit/property/malformed-input tests.
+- Resource lifetimes include frames-in-flight and timeline retirement tests.
+- Data/catalog changes update manifests, citations, counts, hashes, and provenance UI.
+- New performance claims include a device/scenario manifest and percentile data.
+
+Every project-owned C++/Slang source file is intended to carry:
 
 ```cpp
 // SPDX-License-Identifier: AGPL-3.0-only
-// Copyright (c) 2026 Proceduralabs and Helios contributors
+// Copyright (c) 2026 the Helios authors and contributors
 ```
 
-## Practical flow
+This marking policy is provisional until legal review. External contributors should not submit source changes before contributions open; maintainer-owned M0 bootstrap work may land after the current file-license policy is reviewed.
 
-1. Fork, branch from `main`.
-2. Make the change; keep commits scoped and messages in imperative mood ("Add horizon culling test", not "added stuff").
-3. Open the PR; the CLA bot (or, until it exists, a manual checklist) will ask for your CLA signature on first contribution.
-4. CI builds + math tests must pass. GPU-dependent behavior gets a `--headless-smoke` check where feasible.
+## Future pull-request flow
 
-## Not code?
+1. Fork and branch from `main`.
+2. Link an accepted issue/requirement and state the evidence produced.
+3. Keep commits scoped and imperative.
+4. Complete the finalized contributor-rights workflow.
+5. Let CPU, shader, asset, platform, and GPU tests appropriate to the change pass.
+6. Disclose every third-party source/data input and generated-code tool.
+7. Update user-facing limitations when a fallback or support tier changes.
 
-Bug reports with a reproducible camera path, dataset licensing research, DEM pipeline verification against reference imagery, and documentation fixes are all first-class contributions — and none of them can contaminate the license.
+GPU-dependent behavior uses the smallest reproducible headless fixture plus named-device route evidence where required. A screenshot does not replace validation.
+
+## Community files still needed
+
+Before active contributor recruitment, Helios should also publish a code of conduct, security-reporting policy, governance/maintainer policy, issue/PR templates, and legal/privacy details for contributor records.

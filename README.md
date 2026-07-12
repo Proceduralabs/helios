@@ -4,62 +4,105 @@
 
 # Helios
 
-A space simulation engine that takes you from interstellar space to standing on a planetary surface — in one seamless flight, with no loading screens, built on real astronomical data.
+> **Status — design only, 12 July 2026.** This repository contains a project charter and a preliminary architecture. It has no C++ source tree, build system, tests, executable, benchmark results, or downloadable release yet. Every technical claim below is a target until a milestone produces evidence for it.
 
-Written from scratch in C++ and Vulkan. Open source under AGPL-3.0, with commercial licenses available for companies that can't work with copyleft.
+Helios is a planned open-source, real-time **Solar-System visualization engine and reference explorer**. Its first public release aims to move a free-flight camera from an interplanetary view to roughly two metres above one detailed planetary surface without a scene-loading transition.
 
-> **Status: pre-alpha / design phase.** There is no build to download yet. What exists today is a fully worked-out architecture, a decision log, and a roadmap — the code follows it milestone by milestone. Watch the repo if you want to see an engine grow from the first triangle.
+It is intended to be written in C++20 and Vulkan. The community edition is planned for AGPL-3.0-only, with a separately negotiated commercial license for Helios-owned code once the legal and operational pieces are ready.
 
-## What Helios is
+## The 60-second explanation
 
-SpaceEngine proved people want to fly through a scientifically plausible universe. Helios aims at the same experience with three differences:
+The first release, called **v1** in these documents, is exactly the vertical slice delivered by [Roadmap Milestone 10](ROADMAP.md). It is meant to be an interactive technical explorer and a reproducible benchmark, not a game and not yet a general-purpose SDK.
 
-- **Open source.** You can read every line of the LOD system, the coordinate math, the atmosphere. If something is wrong, you can fix it. If something is interesting, you can build on it.
-- **Real data first.** Planet positions come from real ephemerides (VSOP87, later JPL/SPICE). Stars come from real catalogs (HYG, later Gaia subsets). Terrain on mapped bodies comes from real elevation data (SRTM, MOLA, LOLA) with procedural detail below the data's resolution — clearly labeled as such, never passed off as measurement.
-- **Built to be extended.** Deterministic terrain generation (same input always produces the same planet), a headless mode for running generation without a display, and hard module boundaries. The goal is that a researcher or a small studio can rip out one subsystem, improve it, and put it back.
+A v1 user should be able to:
 
-## What v1 promises — exactly
+1. launch a bundled Solar-System scene at a documented date;
+2. follow a preset Earth-approach route or control the camera directly;
+3. travel from the planetary context, through the atmosphere, to an eye-height hover above terrain;
+4. inspect overlays for coordinate frames, level of detail, performance, and data provenance; and
+5. replay the same camera path to compare builds and hardware.
 
-Seamless free flight from interplanetary distance down to a camera 2 m above a planetary surface, with:
+Earth is the accepted v1 **hero body**: one still-to-be-selected curated region uses a documented elevation dataset, while detail below the source resolution is visibly identified as procedural. The Sun, Moon, and other planets provide the astronomical stage and are not promised the same terrain detail in v1.
 
-- stable sub-millimeter precision at every altitude (no jitter, no popping origin shifts)
-- continuous level-of-detail from orbit to ~1 m geometry near the camera
-- one Earth-like atmosphere (Bruneton precomputed scattering)
-- physically-based HDR exposure that handles the sun and starlight in the same frame
-- the Sun, Earth, Moon and planets at their real positions for any date
+“Seamless” means that the route does not stop at an explicit scene-loading screen. Terrain and other resources will still stream in the background. “Two metres above the surface” describes a camera position, not a walking character: v1 has no general collision detection/response, avatar, vehicle, fuel, orbital gameplay, vegetation, buildings, or water simulation. A route-only altitude clamp may keep the benchmark camera above terrain without becoming a surface-physics system.
 
-And explicitly **not** in v1: collision, a walkable avatar, vegetation, buildings, water simulation, n-body physics, black holes. Those live at the bottom of the [roadmap](ROADMAP.md), after the foundation earns them.
+The longer-term vision may grow toward more bodies, interstellar navigation, research tooling, and embeddable engine APIs. Those are separate programs of work, not hidden v1 promises.
 
-## Technical foundation
+## Why build it?
 
-The full reasoning is in [docs/DECISIONS.md](docs/DECISIONS.md) — every contested choice, the ruling, and why the runner-up lost. The short version:
+Existing space and geospatial viewers prove that large-scale navigation is useful. Helios's proposed identity is **honest scale**:
 
-| Problem | Decision |
+- **Measured data stays measured.** A source region records its dataset, datum, native resolution, transformations, and uncertainty.
+- **Model-derived astronomy stays model-derived.** Ephemerides and body rotations name the model, reference frame, supported date range, and tested tolerance.
+- **Procedural synthesis is visible.** Generated detail is never described as measurement merely because it looks plausible.
+- **Display transforms stay display transforms.** Exposure, tone mapping, and artistic color do not change the provenance of the underlying data.
+
+The engine is also intended to be modular internally. Stable third-party plugin or ABI compatibility is not a v1 commitment; that requires real interfaces and a compatibility policy, not just separate static-library names.
+
+## v1 contract
+
+| Area | v1 target | Important limit |
+|---|---|---|
+| Product | Interactive desktop reference explorer plus a scripted benchmark route | Not a game or full engine SDK |
+| Spatial range | Solar-System / interplanetary view to a camera about 2 m above one surface | Interstellar travel is post-v1 architecture work |
+| Precision | Sub-millimetre **local numeric resolution** near the surface and a separately measured screen-space jitter budget | A single barycentric `double` at 10¹³ m has about 1.95 mm spacing, so “sub-mm everywhere” is not claimed |
+| Terrain | Continuous cube-sphere LOD with roughly 1 m near-camera sample spacing on the hero body | Sample spacing and synthesized detail are not 1 m measurement accuracy |
+| Real terrain | One named Earth DEM region with full provenance | Global, uniformly high-resolution measured terrain is not promised |
+| Lighting | One Earth atmosphere preset, physical-light conventions, HDR exposure, and tone mapping | Scientific radiative-transfer accuracy is not implied |
+| Astronomy | Sun, Earth, Moon, planets, and a catalog-derived star sky over a documented date interval | “Any date” and mission-grade navigation accuracy are not promised |
+| Repeatability | Versioned inputs and deterministic seams; exact hashes where integer generation permits, tolerances otherwise | Floating-point GPU output is not promised bitwise-identical across every vendor forever |
+| Platforms | One reference platform first; other platforms earn support through the same validation suite | A GPU's release year is not a capability or performance guarantee |
+
+The measurable contract and still-open thresholds live in [docs/VALIDATION.md](docs/VALIDATION.md).
+
+## Is this realistic?
+
+The core vertical slice is technically credible. The from-scratch implementation is still a large rendering, data, numerical, tooling, and release-engineering project. A rough planning estimate for an experienced C++/Vulkan engineer is **94–170 full-time engineer-weeks**, before ongoing maintenance. At roughly half-time, with integration, specialist review, and rework, **four to seven calendar years** is a more credible expectation than a quick solo release.
+
+That estimate is not a promise. Milestones 0–4 exist to retire the risks that could materially change it. See [docs/FEASIBILITY.md](docs/FEASIBILITY.md) for the claim-by-claim assessment and assumptions.
+
+## Technical direction
+
+The current proposal uses:
+
+| Problem | Proposed direction |
 |---|---|
-| Precision at 10¹³ m | Hierarchical reference frames (barycentric → body-fixed → tile-local), `double` on CPU, camera-relative `float32` handoff to GPU each frame |
-| Depth over astronomical ranges | Reversed-Z, `D32_SFLOAT`, infinite far plane (not logarithmic depth) |
-| Planet LOD | Cube-sphere quadtree, 33×33 grid patches, screen-space-error selection, geomorphing + skirts. GPU-driven culling later; mesh shaders/CBT much later |
-| API baseline | Vulkan 1.3 — dynamic rendering, timeline semaphores, descriptor indexing, buffer device address |
-| Shaders | Slang, compiled offline to SPIR-V, pinned compiler version |
-| Ephemerides | VSOP87 + ELP2000 first, SPICE/DE440 behind the same interface later |
-| Terrain generation | GPU compute, deterministic, structured as a data-driven pass chain (erosion and crater passes slot in without architectural change) |
+| Large coordinates | Frame-tagged `double` positions on CPU; one camera-relative `float32` scene handoff to the GPU |
+| Depth | Reversed-Z, an infinite far projection, and a queried 32-bit floating depth format |
+| Planet LOD | Cube-sphere quadtree, 33×33 grid patches, screen-space-error selection, morphing, and bounded residency |
+| Rendering API | Vulkan 1.3 capability profile, with serialized fallbacks when independent compute or transfer queues do not help |
+| Shaders | Pinned Slang compiler, offline SPIR-V compilation, reflection/ABI tests, and a MoltenVK compatibility spike |
+| Astronomy | A simple analytic ephemeris backend first, later replaceable by SPICE behind the same frame/time contract; a versioned Gaia DR3-derived star catalog |
+| Terrain | Versioned, data-driven generation passes; GPU compute only where its determinism and portability contract is explicit |
 
-Hardware target: a mid-range consumer GPU (Vulkan 1.3, ~2019 or newer). Quality scales up on bigger hardware; it does not require it.
+Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the intended module and runtime design, and [docs/DECISIONS.md](docs/DECISIONS.md) for decisions and revisit triggers.
 
-## Building
+## Repository guide
 
-Nothing to build yet. The first milestone (["Impossible depth range"](ROADMAP.md#milestone-1--impossible-depth-range)) will land with build instructions for Linux, Windows and macOS-via-MoltenVK-where-feasible.
+There is deliberately no `src/`, `CMakeLists.txt`, or build command yet.
 
-## Contributing
+| Start here | What it answers |
+|---|---|
+| [docs/INDEX.md](docs/INDEX.md) | Which document is authoritative, and what should I read next? |
+| [docs/PRODUCT.md](docs/PRODUCT.md) | What is the product, who is it for, and what does v1 actually do? |
+| [ROADMAP.md](ROADMAP.md) | In what order will it be built, and what proves each milestone? |
+| [docs/FEASIBILITY.md](docs/FEASIBILITY.md) | Which expectations are realistic, risky, or not credible as written? |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | How is the implementation intended to be divided? |
+| [docs/VALIDATION.md](docs/VALIDATION.md) | How will precision, seams, performance, astronomy, and portability be tested? |
+| [docs/DATA_AND_PROVENANCE.md](docs/DATA_AND_PROVENANCE.md) | Where do data and generated assets come from, and how are they labelled? |
+| [docs/SUPPORT.md](docs/SUPPORT.md) | What does “supported hardware/platform” mean? |
+| [docs/GLOSSARY.md](docs/GLOSSARY.md) | What do the specialist terms and acronyms mean? |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | What can be contributed at the current stage? |
+| [LICENSING.md](LICENSING.md) | What is the intended licensing model and what is still unresolved? |
 
-Contributions are welcome once the skeleton lands — but read [CONTRIBUTING.md](CONTRIBUTING.md) first. Two things are non-negotiable:
+## Building and contributing
 
-1. **Every contributor signs the [CLA](CLA.md).** Helios is dual-licensed, and that only works if copyright stays consolidated. No CLA, no merge — regardless of how good the patch is.
-2. **No code from GPL projects.** Cosmonium, Stellarium, Celestia and most black-hole demos are study-only references. One pasted GPL snippet destroys the licensing model for everyone.
+There is nothing to build yet. [Milestone 0](ROADMAP.md) creates the first reproducible application skeleton, capability report, test target, CI job, and swapchain-free smoke path.
 
-## License
+Documentation issues and corrections are welcome. Code contributions are not being accepted until the skeleton, CI, reviewed contributor agreement, real legal identity/contact details, and signing workflow exist. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-- **Community:** [AGPL-3.0](LICENSE). Free to use, modify and redistribute — including commercially — as long as your derived work is also AGPL and you provide source to your users, network users included.
-- **Commercial:** if AGPL doesn't work for you (closed-source products, proprietary forks), a commercial license is available. See [LICENSING.md](LICENSING.md).
+## Licensing status
 
-Copyright © 2026 Proceduralabs — Leonhard [SURNAME — fill in]. <!-- TODO: real legal name before going public -->
+The repository states an AGPL-3.0-only licensing intent and contains a **draft, unreviewed** contributor agreement. The actual licensor(s), chain of title, and banner ownership must be named/confirmed before outsiders are asked to rely on that grant or any commercial terms. Third-party code, datasets, catalogs, and assets keep their own licenses. See [LICENSING.md](LICENSING.md); its plain-language notes are project guidance, not legal advice.
+
+Copyright © 2026 the Helios repository authors. The complete public legal rights-holder notice is still a release blocker; see [LICENSING.md](LICENSING.md).

@@ -1,16 +1,18 @@
-# Helios Individual Contributor License Agreement (v0.1 — DRAFT)
+# Helios Individual Contributor License Agreement (v0.1 — UNSIGNABLE DRAFT)
 
-> ⚠️ **This is a working draft written by the maintainer, not by a lawyer.** It follows the structure of widely used individual CLAs, but it must be reviewed by a lawyer qualified in Austrian/EU law before Helios accepts external contributions of any real size. Until then it documents intent.
+> ⚠️ **Do not sign or rely on this document.** It is a working draft written by the maintainer, not by a lawyer. It must be reviewed by a lawyer qualified in Austrian/EU law; the legal identity, company-contribution path, privacy/retention policy, and signature workflow are incomplete. Helios is not accepting external code or pull-request contributions until those blockers are closed.
 
-This Contributor License Agreement ("Agreement") is between the individual signing below ("You") and **Proceduralabs, Leonhard [SURNAME], Innsbruck, Austria** ("the Maintainer"), covering Your contributions to the Helios project.
+This Contributor License Agreement ("Agreement") would be between the individual signing below ("You") and **[the Maintainer's complete legal name/entity and address — intentionally unset in this draft]** ("the Maintainer"), covering Your contributions to the Helios project.
 
 ## 1. Definitions
 
-"Contribution" means any original work of authorship — code, documentation, data pipelines, shader code, or other material — that You intentionally submit to the Helios project, in any form (pull request, patch, issue attachment, or otherwise). Work clearly marked "Not a Contribution" is excluded.
+"Contribution" means Your original work of authorship—code, documentation, data-pipeline software, shader code, or other original material—that You intentionally submit to the Helios project through the finalized contribution workflow. Work clearly marked "Not a Contribution" is excluded.
+
+Third-party datasets, catalog rows, imagery, elevation products, reference captures, and other separately licensed content are not relicensed by this Agreement merely because You identify, reference, or bundle them. They require the project's separate data/asset review and manifest process, and must not be attached or submitted unless that process explicitly allows it. Original metadata, tools, or documentation You author around such a source may still be a Contribution without changing the source's rights.
 
 ## 2. Copyright license
 
-You grant the Maintainer a perpetual, worldwide, non-exclusive, irrevocable, royalty-free copyright license to reproduce, prepare derivative works of, publicly display, publicly perform, distribute, and sublicense Your Contributions and derivative works — **including the right to license Your Contributions under license terms of the Maintainer's choosing**, such as the GNU AGPL-3.0 and separate commercial licenses.
+You grant the Maintainer a perpetual, worldwide, non-exclusive, irrevocable, royalty-free copyright license to reproduce, prepare derivative works of, publicly display, publicly perform, distribute, and sublicense Your Contributions and derivative works — **including the right to license Your Contributions under license terms of the Maintainer's choosing**, such as GNU AGPL-3.0-only and separate commercial licenses.
 
 You retain full ownership of Your Contributions and all rights to use, license, and distribute them yourself for any purpose.
 
@@ -23,7 +25,7 @@ You grant the Maintainer and all recipients of the Helios software a perpetual, 
 You represent that:
 
 1. You are legally entitled to grant the above licenses. If Your employer has rights to intellectual property You create, You have received permission to make Contributions on behalf of that employer, or Your employer has waived such rights.
-2. Each Contribution is Your original creation. Where it includes third-party material, You have identified it, its source, and its license clearly in the submission — and it is under a permissive license compatible with dual licensing (MIT, BSD, Apache-2.0, Zlib, public domain). **You have not included material from GPL, LGPL, or unlicensed sources.**
+2. Each Contribution is Your original creation. Where project review explicitly permits incorporated third-party software material, You have identified it, its source, and its license clearly in the submission—and it is under terms compatible with the intended dual licensing (for example MIT, BSD, Apache-2.0, Zlib, or public domain). **You have not included source copied from GPL, LGPL, or unlicensed sources.** Separately licensed datasets/assets are handled outside this Agreement and are not represented as material the Maintainer can commercially relicense.
 3. You are not aware of any claims, encumbrances, or licensing conflicts affecting Your Contribution.
 
 ## 5. No obligation, no warranty
@@ -32,7 +34,7 @@ The Maintainer is not obligated to use or include Your Contribution. Except for 
 
 ## 6. Community promise
 
-The Maintainer commits that every Contribution accepted under this Agreement will always remain available under the AGPL-3.0 (or a later OSI-approved version of it) in addition to any other licensing. Commercial licensing funds development; it never removes the open version.
+The intended community promise is that every Contribution accepted under the finalized agreement will remain available under AGPL-3.0-only in addition to any other licensing. If a later AGPL or another open license is ever added, it will be additional rather than a removal of AGPL-3.0-only availability. Counsel must review the final wording.
 
 ---
 
@@ -45,4 +47,4 @@ The Maintainer commits that every Contribution accepted under this Agreement wil
 | Email | |
 | Date | |
 
-Signature is collected per-contributor via [CLA assistant tooling — TODO: set up cla-assistant.io or a signed-commit workflow before the first external PR].
+No signature mechanism exists. The finalized workflow must record the agreement version, identity/authority, timestamp, contribution scope, privacy notice, and auditable acceptance before the first external pull request can merge.
