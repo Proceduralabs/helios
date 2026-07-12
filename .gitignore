@@ -16,7 +16,7 @@ CMakeFiles/
 shaders/generated/
 
 # Baked data (large; distributed separately)
-assets/
+!assets/banner.png
 *.r16
 *.ktx2
 
