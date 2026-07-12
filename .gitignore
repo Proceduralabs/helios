@@ -1,0 +1,29 @@
+# Build
+build/
+out/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+
+# IDE
+.vscode/
+.idea/
+.vs/
+*.swp
+
+# Compiled shaders / generated
+*.spv
+shaders/generated/
+
+# Baked data (large; distributed separately)
+assets/
+*.r16
+*.ktx2
+
+# Profiling / captures
+*.tracy
+*.rdc
+
+# OS noise
+.DS_Store
+Thumbs.db
